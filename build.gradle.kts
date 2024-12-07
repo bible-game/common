@@ -6,9 +6,6 @@ plugins {
 	id("maven-publish")
 }
 
-group = "bible.game"
-version = "0.0.1-SNAPSHOT"
-
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
@@ -16,6 +13,7 @@ java {
 }
 
 repositories {
+	mavenLocal()
 	mavenCentral()
 }
 
@@ -38,4 +36,12 @@ kotlin {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.bootJar {
+	enabled = false
+}
+
+tasks.jar {
+	enabled = true
 }
