@@ -1,9 +1,10 @@
 plugins {
-	kotlin("jvm") version "1.9.25"
-	kotlin("plugin.spring") version "1.9.25"
+	`maven-publish`
+	kotlin("jvm") version "2.1.0"
+	kotlin("plugin.spring") version "2.1.0"
 	id("org.springframework.boot") version "3.4.0"
 	id("io.spring.dependency-management") version "1.1.6"
-	id("maven-publish")
+	id("net.researchgate.release") version "3.0.2"
 }
 
 java {
@@ -30,5 +31,22 @@ publishing {
 		create<MavenPublication>("maven") {
 			from(components["java"])
 		}
+	}
+
+	repositories {
+		maven {
+			name = "githubPackages"
+			url = uri("https://maven.pkg.github.com/bible-game/common")
+			credentials {
+				username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
+				password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+			}
+		}
+	}
+}
+
+tasks.register("printTagVersion") {
+	doLast {
+		println(project.version.toString().split("-")[0])
 	}
 }
