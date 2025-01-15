@@ -26,6 +26,14 @@ dependencies {
 	implementation(libs.bundles.test)
 }
 
+tasks.getByName<Jar>("jar") {
+	enabled = true
+}
+
+release {
+	buildTasks.add("publish")
+}
+
 publishing {
 	publications {
 		create<MavenPublication>("maven") {
