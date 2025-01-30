@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory
  * @author J. R. Smith
  * @since 7th December 2024
  */
+@Deprecated("The is better practise in Kotlin, see: https://stackoverflow.com/questions/60419699/implement-slf4j-annotation-from-lombok-in-kotlin")
 abstract class Log {
     val log: Logger = LoggerFactory.getLogger(this.javaClass)
 }
