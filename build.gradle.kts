@@ -16,13 +16,24 @@ java {
 repositories {
 	mavenLocal()
 	mavenCentral()
+	maven {
+		name = "GitHubPackages"
+		url = uri("https://maven.pkg.github.com/bible-game/config")
+		credentials {
+			username = System.getenv("GITHUB_ACTOR")
+			password = System.getenv("GITHUB_TOKEN")
+		}
+	}
 }
 
 dependencies {
+	implementation(libs.bundles.config)
 	implementation(libs.bundles.core)
 	implementation(libs.bundles.data)
+	implementation(libs.bundles.jwt)
 	implementation(libs.bundles.kotlin)
 	implementation(libs.bundles.spring)
+	implementation(libs.bundles.web)
 	implementation(libs.bundles.test)
 }
 
