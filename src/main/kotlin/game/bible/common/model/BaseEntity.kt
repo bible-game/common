@@ -22,14 +22,14 @@ import org.springframework.data.annotation.LastModifiedDate
 abstract class BaseEntity : Serializable {
 
     @Id @GeneratedValue(strategy = IDENTITY)
-    private var id: Long? = null
+    var id: Long? = null
 
     @LastModifiedDate
     @Column(name = "last_modified", nullable = false)
-    protected var lastModified: Timestamp = Timestamp(System.currentTimeMillis())
+    var lastModified: Timestamp = Timestamp(System.currentTimeMillis())
 
     @CreatedDate
     @Column(name = "created_date", nullable = false, updatable = false)
-    protected var createdDate: Timestamp = Timestamp(System.currentTimeMillis())
+    var createdDate: Timestamp = Timestamp(System.currentTimeMillis())
 
 }
