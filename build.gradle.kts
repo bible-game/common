@@ -34,6 +34,7 @@ dependencies {
 	implementation(libs.bundles.kotlin)
 	implementation(libs.bundles.spring)
 	implementation(libs.bundles.web)
+	implementation(libs.bundles.security)
 	implementation(libs.bundles.test)
 }
 
