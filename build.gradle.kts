@@ -30,6 +30,7 @@ dependencies {
 	implementation(libs.bundles.config)
 	implementation(libs.bundles.core)
 	implementation(libs.bundles.data)
+	implementation(libs.bundles.integration)
 	implementation(libs.bundles.jwt)
 	implementation(libs.bundles.kotlin)
 	implementation(libs.bundles.spring)
