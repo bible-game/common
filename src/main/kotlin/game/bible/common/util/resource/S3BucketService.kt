@@ -15,11 +15,11 @@ import software.amazon.awssdk.services.s3.model.HeadObjectResponse
 private val log = KotlinLogging.logger {}
 
 /**
- * S3-Bucket Service Logic
+ * S3 Bucket Service Logic
  * @since 9th July 2025
  */
 @Service
-class S3Service(
+class S3BucketService(
     private val aws: AwsConfig,
     private val s3: S3Client) {
 
@@ -33,12 +33,13 @@ class S3Service(
     }
 
     /** Retrieves the audio bytes for a given passage */
-    fun getAudio(passageKey: String): Pair<String, ByteArray>? {
+    fun getAudio(passageKey: String): ByteArray? {
         log.debug { "Retrieving audio for [$passageKey]" }
         val bucket = aws.getS3()!!.getAudioBucket()!!
 
         return try {
-            retrieveItem(bucket, "${passageKey}.mp3")
+            val item = retrieveItem(bucket, "${passageKey}.mp3")
+            item.second
 
         } catch (e: Exception) {
             log.error { "Error retrieving audio content!" }
