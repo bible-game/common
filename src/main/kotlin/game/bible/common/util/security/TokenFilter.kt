@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.StringUtils.startsWith
+import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
@@ -32,6 +33,7 @@ class TokenFilter(
     @Throws(ServletException::class)
     override fun doFilterInternal(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain) {
         try {
+            log.debug("Request received with details: [URI: {}, Method: {}, Cookies: {}] ", req.requestURI, req.method, req.cookies?.joinToString(separator = ", "))
             val url = StringUtils.substringAfter(req.requestURI, req.contextPath)
             if (excludes.stream().anyMatch { exclusion -> startsWith(url, exclusion) }) {
                 chain.doFilter(req, res)
@@ -55,6 +57,10 @@ class TokenFilter(
         } catch (e: Exception) {
             throw ServletException(e.message)
         }
+    }
+
+    companion object {
+        val log = LoggerFactory.getLogger(TokenFilter::class.java)
     }
 
 }

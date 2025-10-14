@@ -39,11 +39,11 @@ class TokenManager(
     /** Retrieve key from secret  */
     private val key: SecretKey
     get() = Keys.hmacShaKeyFor(
-        Decoders.BASE64.decode(config.getJwt()!!.getSigningSecret())
+        Decoders.BASE64.decode(config.getSigningSecret())
     )
 
-    fun getToken(): String? {
-        val jwt = config.getJwt()
+    fun getToken(tokenType: String): String? {
+        val jwt = config.getJwts()!![tokenType]!!
         checkNotNull(jwt) { "Security configuration is missing jwt" }
 
         var token: String? = null
@@ -79,15 +79,22 @@ class TokenManager(
         return token
     }
 
-    /** Generate a JWT token for given user  */
-    fun generateFor(userId: Long): String {
+    /**
+     * Generate a new JWT Auth/Refresh Token for the given User ID
+     *
+     * @param sub ID to apply as 'sub'
+     * @param tokenType String type name ("auth" or "refresh") to specify which config to use
+     * @return Compacted JWT as a String
+     */
+    fun generateFor(sub: String, tokenType: String): String {
+        val tokenConfig = config.getJwts()!![tokenType]!!
         return Jwts.builder()
-            .expiration(Date.from(ZonedDateTime.now().plusMinutes(config.getJwt()!!.getSessionTimeoutMins()!!.toLong()).toInstant()))
+            .expiration(Date.from(ZonedDateTime.now().plusMinutes(tokenConfig.getTimeoutMins()!!.toLong()).toInstant()))
             .issuedAt(Date())
-            .issuer(config.getJwt()!!.getCookieDomain())
+            .issuer(tokenConfig.getCookieDomain())
             .signWith(key)
-            .subject(userId.toString())
-            .audience().add(config.getJwt()!!.getCookieDomain())
+            .subject(sub)
+            .audience().add(tokenConfig.getCookieDomain())
             .and().compact()
     }
 
@@ -112,8 +119,8 @@ class TokenManager(
     }
 
     /** Retrieves a field from the [Claims] by type */
-    fun <T> get(field: String, type: Class<T>?): T? {
-        return get(getToken(), field, type)
+    fun <T> get(field: String, type: Class<T>?, tokenType: String): T? {
+        return get(getToken(tokenType), field, type)
     }
 
     /** Retrieves a field from the [Claims] by type */
@@ -131,8 +138,8 @@ class TokenManager(
         }
     }
 
-    fun getClaims(): Claims {
-        return getClaims(getToken())
+    fun getClaimsForType(tokenType: String): Claims {
+        return getClaims(getToken(tokenType))
     }
 
     fun getClaims(token: String?): Claims {
@@ -145,7 +152,7 @@ class TokenManager(
     }
 
     private fun generateSecretKey(): SecretKey {
-        val secret = config.getJwt()?.getSigningSecret()
+        val secret = config.getSigningSecret()
         val decodedKey: ByteArray = Base64.getDecoder().decode(secret)
         return Keys.hmacShaKeyFor(decodedKey)
     }
